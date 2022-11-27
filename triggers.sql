@@ -1,5 +1,5 @@
-drop sequence if exists part_number_seq;
-create sequence part_number_seq start with 5000 increment by 1;
+drop sequence if exists part_number_val;
+create sequence part_number_val start with 5000 increment by 1;
 
 
 create or replace language plpgsql;
@@ -9,25 +9,26 @@ returns "trigger" as
 $BODY$
 BEGIN
 
-NEW.part_number = part_number_seq;
+NEW.part_number = nextval('part_number_val');
 return NEW;
 
-END;
+END
 $BODY$
 language plpgsql volatile;
 
-drop trigger if exists nyc_part_inc on part_nyc;
+drop trigger if exists nyc_partinc on part_nyc;
+/*drop trigger if exists sfo_partinc on part_sfo;*/
 
-create trigger nyc_part_inc
+create trigger nyc_partinc
 before insert 
 on part_nyc
 for each row
 execute procedure myfunc();
+/*
+drop trigger if exists sfo_partinc on part_sfo;
 
-drop trigger if exists sfo_part_inc on part_sfo
-
-create trigger part_sfo_inc
+create trigger part_sfoinc
 before insert 
 on part_sfo
 for each row
-execute myfunc();
+execute procedure myfunc();*/
